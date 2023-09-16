@@ -34,7 +34,7 @@ public class NettyServer {
                     });
 
             ChannelFuture future = bootstrap.bind(port).sync();
-            logger.info(String.format("Starting DNS Server on port: %d", port));
+            logger.info(String.format("Starting DNS Server on port %d", port));
             future.channel().closeFuture().sync();
         } catch (Exception e) {
             e.printStackTrace();
