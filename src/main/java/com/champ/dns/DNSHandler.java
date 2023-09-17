@@ -23,15 +23,14 @@ public class DNSHandler extends SimpleChannelInboundHandler<DatagramDnsQuery> {
         DatagramDnsResponse response = new DatagramDnsResponse(query.recipient(), query.sender(), query.id());
         try {
             InetAddress addr = InetAddress.getByName(dnsQuestion.name());
-             response.addRecord(DnsSection.ANSWER, new DefaultDnsRawRecord(
+            response.addRecord(DnsSection.ANSWER, new DefaultDnsRawRecord(
                     dnsQuestion.name(),
                     DnsRecordType.A,
                     60,
                     Unpooled.buffer().writeBytes(addr.getAddress())));
 
         } catch (UnknownHostException unk) {
-            // TODO: Return something like DNS error(?)
-            logger.severe(String.format("Unknown host for address: %s", dnsQuestion.name()));
+            response.retain().release();
         }
 
         ctx.writeAndFlush(response).addListener((future) -> {
